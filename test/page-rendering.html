@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>js-word-processor test</title>
+    <script src="../src/page-rendering.js"></script>
+    <script type="text/javascript">
+        function run() {
+            var ctx = document.getElementById("wp").getContext("2d");
+
+            jswp.PageRendering.clear(ctx);
+
+            jswp.PageRendering.drawPage(ctx, 0.1, 0.1, {
+                width: 21,
+                height: 29.7,
+                margins: {
+                    left: 2,
+                    right: 2,
+                    top: 2.5,
+                    bottom: 2
+                }
+            });
+        }
+    </script>
+</head>
+
+<body onload="run();">
+    <canvas id="wp" width="1100" height="800"></canvas>
+</body>
+
+</html>
