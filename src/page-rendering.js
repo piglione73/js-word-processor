@@ -4,10 +4,11 @@ window.jswp = window.jswp || {};
     var exports = {};
 
     var onePointInCm = 2.54 / 72;
-
+	var onePointInMicrons = onePointInCm * 10000;
+	
     exports.clear = function(ctx) {
         //Gray background
-        ctx.fillStyle = "#ccc";
+        ctx.fillStyle = "#eee";
         ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     };
 
@@ -18,21 +19,21 @@ window.jswp = window.jswp || {};
         ctx.scale(scale, scale);
         ctx.translate(x, y);
 
-        //White page with a 1pt border
+        //White page with a 0.5pt border
         ctx.fillStyle = "#fff";
-        ctx.strokeStyle = "#000";
-        ctx.lineWidth = onePointInCm;
+        ctx.strokeStyle = "#aaa";
+        ctx.lineWidth = onePointInCm / 2;
         ctx.beginPath();
         ctx.rect(0, 0, pageSettings.width, pageSettings.height);
         ctx.fill();
         ctx.stroke();
 
         ctx.translate(pageSettings.margins.left, pageSettings.margins.top);
-        ctx.font = "12px Verdana";
+        ctx.font = (12 * onePointInMicrons) + "px Verdana";
         ctx.fillStyle = "#000";
 
-        //Back to pt
-        ctx.scale(1 / scale, 1 / scale);
+        //Set microns
+        ctx.scale(0.0001, 0.0001);
         ctx.fillText("Hello world, this is a string of text in Verdana 12pt.", 0, 0);
         ctx.restore();
     };
