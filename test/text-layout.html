@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>js-word-processor test</title>
+    <script src="../src/page-rendering.js"></script>
+    <script src="../src/text-layout.js"></script>
+    <script type="text/javascript">
+        function run() {
+            var ctx = document.getElementById("wp").getContext("2d");
+
+            jswp.PageRendering.clear(ctx);
+
+            var words = [{
+                text: "The"
+            }, {
+                text: "quick"
+            }, {
+                text: "brown"
+            }, {
+                text: "fox"
+            }, {
+                text: "jumps"
+            }, {
+                text: "over"
+            }, {
+                text: "the"
+            }, {
+                text: "lazy"
+            }, {
+                text: "dog."
+            }, {
+                text: "Hello"
+            }, {
+                text: "world,"
+            }, {
+                text: "this"
+            }, {
+                text: "is"
+            }, {
+                text: "a"
+            }, {
+                text: "string"
+            }, {
+                text: "of"
+            }, {
+                text: "text"
+            }, {
+                text: "in"
+            }, {
+                text: "Verdana"
+            }, {
+                text: "12pt."
+            }];
+
+            var container = {
+                y:0,
+                getLine:function() {
+                    return {
+                        
+                    };
+                }
+            };
+            
+            jswp.TextLayout.measureWords(ctx,words);
+            var lines = jswp.TextLayout.allocateWordsIntoLines(container, words, 0);
+        }
+    </script>
+</head>
+
+<body onload="run();">
+    <canvas id="wp" width="1100" height="800"></canvas>
+</body>
+
+</html>

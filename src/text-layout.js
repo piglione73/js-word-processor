@@ -4,11 +4,19 @@ window.jswp = window.jswp || {};
     var exports = {};
 
     /*
+    Apply a style to the canvas context.
+    */
+    function applyStyle(ctx, style) {
+        ctx.font = "12px Verdana";
+        ctx.fillStyle = "#000";
+    }
+
+    /*
     Measure a word
     */
-    function measureWord(canvasCtx, word) {
-        applyStyle(canvasCtx, word.style);
-        var metrics = canvasCtx.measureText(word.text);
+    function measureWord(ctx, word) {
+        applyStyle(ctx, word.style);
+        var metrics = ctx.measureText(word.text);
         word.width = metrics.width;
         word.ascent = metrics.emHeightAscent;
         word.descent = metrics.emHeightDescent;
@@ -18,9 +26,11 @@ window.jswp = window.jswp || {};
     /*
     Measure an array of words
     */
-    function measureWords(canvasCtx, words) {
+    exports.measureWords = measureWords;
+
+    function measureWords(ctx, words) {
         for (var i = 0; i < words.length; i++)
-            measureWord(canvasCtx, words[i]);
+            measureWord(ctx, words[i]);
     }
 
     /*
@@ -28,7 +38,9 @@ window.jswp = window.jswp || {};
     If the maximum line height has been overflowed, then discard this line and try again with the next line.
     If we are inside the available height, then we confirm the line layout.
     */
-    function layWordsIntoLines(container, words, interLineSpacing) {
+    exports.allocateWordsIntoLines = allocateWordsIntoLines;
+
+    function allocateWordsIntoLines(container, words, interLineSpacing) {
         var lines = [];
 
         //We reason word by word, starting from the first word
