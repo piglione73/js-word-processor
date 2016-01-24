@@ -11,35 +11,44 @@ window.jswp = window.jswp || {};
         ctx.fillStyle = "#000";
     }
 
-	var getTextHeight = function(font) {
-TODO:
-  var text = $('<span>Hg</span>').css({ fontFamily: font });
-  var block = $('<div style="display: inline-block; width: 1px; height: 0px;"></div>');
-
-  var div = $('<div></div>');
-  div.append(text, block);
-
-  var body = $('body');
-  body.append(div);
-
-  try {
-
-    var result = {};
-
-    block.css({ verticalAlign: 'baseline' });
-    result.ascent = block.offset().top - text.offset().top;
-
-    block.css({ verticalAlign: 'bottom' });
-    result.height = block.offset().top - text.offset().top;
-
-    result.descent = result.height - result.ascent;
-
-  } finally {
-    div.remove();
-  }
-
-  return result;
-};
+    function write(container, text) {
+        if(text) {
+            var textElem = document.createTextNode(text);
+            container.appendChild(textElem);
+        }
+    }
+    
+    function writeTag(container, tag, text) {
+        var tagElem = document.createElement(tag);
+        container.appendChild(tagElem);
+        write(tagElem, text);
+        return tagElem;
+    }
+    
+    exports.measureFont=measureFont;
+    function measureFont(fontName, fontSize) {
+        /*
+        Write a text in 200px font size and a text in 100px font size, baseline aligned.
+        The difference in coordinates of the two bounding rects gives the ascent/descent of a 100px font size.
+        */
+        var div = writeTag(document.body, "div", "gM");
+        var span = writeTag(div, "span", "gM");
+        div.style.fontFamily = fontName;
+        div.style.fontWeight = "bold";
+        div.style.fontSize = "200px";
+        span.style.fontSize = "100px";
+        var rect1 = div.getBoundingClientRect();
+        var rect2 = span.getBoundingClientRect();
+        var ascent = rect2.top - rect1.top;
+        var descent = rect1.bottom - rect2.bottom;
+        document.body.removeChild(div);
+        
+        return {
+            ascent: ascent * fontSize / 100,
+            descent: descent * fontSize / 100
+        };
+    }
+    
     /*
     Measure a word
     */

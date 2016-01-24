@@ -62,6 +62,8 @@
                 }
             };
             
+            var fontMetrics = jswp.TextLayout.measureFont("Verdana", 12);
+
             jswp.TextLayout.measureWords(ctx,words);
             var lines = jswp.TextLayout.allocateWordsIntoLines(container, words, 0);
         }
