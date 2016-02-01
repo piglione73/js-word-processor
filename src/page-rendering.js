@@ -1,18 +1,18 @@
 window.jswp = window.jswp || {};
 
-(function() {
+(function () {
     var exports = {};
 
     var onePointInCm = 2.54 / 72;
-	var onePointInMicrons = onePointInCm * 10000;
-	
-    exports.clear = function(ctx) {
+    var onePointInMicrons = onePointInCm * 10000;
+
+    exports.clear = function (ctx) {
         //Gray background
         ctx.fillStyle = "#eee";
         ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     };
 
-    exports.drawPage = function(ctx, x, y, pageSettings) {
+    exports.drawPage = function (ctx, x, y, pageSettings) {
         //Assume 100dpi and express everything in centimeters
         ctx.save();
         var scale = 100 / 2.54;

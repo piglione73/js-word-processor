@@ -1,6 +1,6 @@
 window.jswp = window.jswp || {};
 
-(function() {
+(function () {
     var exports = {};
 
     /*
@@ -12,20 +12,25 @@ window.jswp = window.jswp || {};
     }
 
     function write(container, text) {
-        if(text) {
+        if (text) {
             var textElem = document.createTextNode(text);
             container.appendChild(textElem);
         }
     }
-    
+
     function writeTag(container, tag, text) {
         var tagElem = document.createElement(tag);
         container.appendChild(tagElem);
         write(tagElem, text);
         return tagElem;
     }
-    
-    exports.measureFont=measureFont;
+
+    exports.measureStyle=measureStyle;
+    function measureStyle(style) {
+        return measureFont("Verdana", 12);
+    }
+
+    exports.measureFont = measureFont;
     function measureFont(fontName, fontSize) {
         /*
         Write a text in 200px font size and a text in 100px font size, baseline aligned.
@@ -42,22 +47,24 @@ window.jswp = window.jswp || {};
         var ascent = rect2.top - rect1.top;
         var descent = rect1.bottom - rect2.bottom;
         document.body.removeChild(div);
-        
+
         return {
             ascent: ascent * fontSize / 100,
             descent: descent * fontSize / 100
         };
     }
-    
+
     /*
     Measure a word
     */
     function measureWord(ctx, word) {
         applyStyle(ctx, word.style);
         var metrics = ctx.measureText(word.text);
+        var fontMetrics = measureStyle(word.style);
+
         word.width = metrics.width;
-        word.ascent = metrics.emHeightAscent;
-        word.descent = metrics.emHeightDescent;
+        word.ascent = fontMetrics.ascent;
+        word.descent = fontMetrics.descent;
         word.height = word.ascent + word.descent;
     }
 
@@ -65,7 +72,6 @@ window.jswp = window.jswp || {};
     Measure an array of words
     */
     exports.measureWords = measureWords;
-
     function measureWords(ctx, words) {
         for (var i = 0; i < words.length; i++)
             measureWord(ctx, words[i]);
@@ -77,7 +83,6 @@ window.jswp = window.jswp || {};
     If we are inside the available height, then we confirm the line layout.
     */
     exports.allocateWordsIntoLines = allocateWordsIntoLines;
-
     function allocateWordsIntoLines(container, words, interLineSpacing) {
         var lines = [];
 

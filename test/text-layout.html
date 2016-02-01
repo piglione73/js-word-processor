@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>js-word-processor test</title>
     <script src="../src/page-rendering.js"></script>
@@ -54,24 +53,27 @@
             }];
 
             var container = {
-                y:0,
-                getLine:function() {
+                y: 0,
+                getLine: function () {
                     return {
-                        
+                        y1: container.y,
+                        x1: 100,
+                        x2: 300,
+                        maxHeight: 1000,
+                        useHeight: function (h) {
+                            container.y += h;
+                        }
                     };
                 }
             };
-            
-            var fontMetrics = jswp.TextLayout.measureFont("Verdana", 12);
 
-            jswp.TextLayout.measureWords(ctx,words);
+            jswp.TextLayout.measureWords(ctx, words);
             var lines = jswp.TextLayout.allocateWordsIntoLines(container, words, 0);
         }
     </script>
 </head>
-
 <body onload="run();">
-    <canvas id="wp" width="1100" height="800"></canvas>
+    <canvas id="wp" width="1100" height="800">
+    </canvas>
 </body>
-
 </html>
