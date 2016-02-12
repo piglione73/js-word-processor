@@ -11,55 +11,65 @@
             jswp.PageRendering.clear(ctx);
 
             var words = [{
-                text: "The"
+                text: "The "
             }, {
-                text: "quick"
+                text: "quick "
             }, {
-                text: "brown"
+                text: "brown "
             }, {
-                text: "fox"
+                text: "fox "
             }, {
-                text: "jumps"
+                text: "jumps "
             }, {
-                text: "over"
+                text: "over "
             }, {
-                text: "the"
+                text: "the "
             }, {
-                text: "lazy"
+                text: "lazy "
             }, {
-                text: "dog."
+                text: "dog. "
             }, {
-                text: "Hello"
+                text: "Hello "
             }, {
-                text: "world,"
+                text: "world, "
             }, {
-                text: "this"
+                text: "this "
             }, {
-                text: "is"
+                text: "is "
             }, {
-                text: "a"
+                text: "a "
             }, {
-                text: "string"
+                text: "string "
             }, {
-                text: "of"
+                text: "of "
             }, {
-                text: "text"
+                text: "text "
             }, {
-                text: "in"
+                text: "in "
             }, {
-                text: "Verdana"
+                text: "Verdana "
             }, {
-                text: "12pt."
+                text: "12pt. "
             }];
 
+            //Double the array a few times
+            for (var N = 0; N < 10; N++) {
+                var len = words.length;
+                for (var i = 0; i < len; i++)
+                    words.push({ text: words[i].text });
+            }
+
             var container = {
-                y: 0,
+                y: 100,
                 getLine: function () {
+                    if (container.y >= 1700)
+                        return;
+
                     return {
                         y1: container.y,
                         x1: 100,
-                        x2: 300,
-                        maxHeight: 1000,
+                        x2: 1000,
+                        maxHeight: 1700 - container.y,
                         useHeight: function (h) {
                             container.y += h;
                         }
@@ -69,11 +79,15 @@
 
             jswp.TextLayout.measureWords(ctx, words);
             var lines = jswp.TextLayout.allocateWordsIntoLines(container, words, 0);
+            for (var i = 0; i < lines.length; i++) {
+                jswp.TextLayout.layoutWordsInsideLine(lines[i]);
+                jswp.TextLayout.drawLine(ctx, lines[i]);
+            }
         }
     </script>
 </head>
 <body onload="run();">
-    <canvas id="wp" width="1100" height="800">
+    <canvas id="wp" width="1100" height="1800">
     </canvas>
 </body>
 </html>

@@ -3,6 +3,8 @@ window.jswp = window.jswp || {};
 (function () {
     var exports = {};
 
+    var cachedFontMeasures = {};
+
     /*
     Apply a style to the canvas context.
     */
@@ -25,13 +27,18 @@ window.jswp = window.jswp || {};
         return tagElem;
     }
 
-    exports.measureStyle=measureStyle;
+    exports.measureStyle = measureStyle;
     function measureStyle(style) {
         return measureFont("Verdana", 12);
     }
 
     exports.measureFont = measureFont;
     function measureFont(fontName, fontSize) {
+        var key = fontName + "/" + fontSize;
+        var cachedMeasure = cachedFontMeasures[key];
+        if (cachedMeasure)
+            return cachedMeasure;
+
         /*
         Write a text in 200px font size and a text in 100px font size, baseline aligned.
         The difference in coordinates of the two bounding rects gives the ascent/descent of a 100px font size.
@@ -48,10 +55,15 @@ window.jswp = window.jswp || {};
         var descent = rect1.bottom - rect2.bottom;
         document.body.removeChild(div);
 
-        return {
+        //Put into cache for later use
+        cachedMeasure = {
             ascent: ascent * fontSize / 100,
             descent: descent * fontSize / 100
         };
+
+        cachedFontMeasures[key] = cachedMeasure;
+
+        return cachedMeasure;
     }
 
     /*
@@ -92,6 +104,9 @@ window.jswp = window.jswp || {};
         //Place words into lines until we placed all words
         while (wordIndex < words.length) {
             var line = container.getLine();
+            if (!line)
+                break;
+
             var placement = allocateWordsIntoLine(line, words, wordIndex);
             if (placement.height > line.maxHeight) {
                 //Not enough room, so give up and try again on next line from the same wordIndex
@@ -147,6 +162,41 @@ window.jswp = window.jswp || {};
             nextWordIndex: wordIndex,
             height: maxHeight
         };
+    }
+
+    /*
+    Layout words in a single line based on the current paragraph alignment settings.
+    */
+    exports.layoutWordsInsideLine = layoutWordsInsideLine;
+    function layoutWordsInsideLine(line) {
+        //Determine the baseline position (= max word ascent) relative to the line's y1 coordinate
+        var baselinePosition = 0;
+        for (var i = 0; i < line.words.length; i++) {
+            var word = line.words[i];
+            baselinePosition = Math.max(baselinePosition, word.ascent);
+        }
+
+        //Now layout the words, always in relative coords
+        var x = 0;
+        for (var i = 0; i < line.words.length; i++) {
+            var word = line.words[i];
+            word.y = baselinePosition - word.ascent;
+            word.x = x;
+            x += word.width;
+        }
+    }
+
+    exports.drawLine = drawLine;
+    function drawLine(ctx, line) {
+        ctx.textBaseline = "top";
+        for (var i = 0; i < line.words.length; i++) {
+            var word = line.words[i];
+            var x = line.x1 + word.x;
+            var y = line.y1 + word.y;
+
+            applyStyle(ctx, word.style);
+            ctx.fillText(word.text, x, y);
+        }
     }
 
     //Export public functions
